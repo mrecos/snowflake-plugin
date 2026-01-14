@@ -1,5 +1,7 @@
 # Snowflake Daemon Plugin
 
+![Snowflake Daemon Plugin banner](img/banner1.png)
+
 Session-persistent Snowflake plugin with background daemon for maintaining database connections.
 
 ## Overview
