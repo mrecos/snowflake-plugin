@@ -34,14 +34,15 @@ exec_time = result.get('execution_time', 0)
 if row_count == 0:
     print("No results returned")
 else:
-    # Print column headers
+    # Print as markdown table for better rendering in Claude Code
     if columns:
-        header = " | ".join(str(col) for col in columns)
-        print(header)
-        print("-" * len(header))
+        # Header row
+        print("| " + " | ".join(str(col) for col in columns) + " |")
+        # Separator row
+        print("|" + "|".join([" --- " for _ in columns]) + "|")
 
-    # Print data rows
-    for row in data:
-        print(" | ".join(str(val) if val is not None else "NULL" for val in row))
+        # Data rows
+        for row in data:
+            print("| " + " | ".join(str(val) if val is not None else "NULL" for val in row) + " |")
 
 print(f"\n✓ {row_count} row(s) in {exec_time:.3f}s")

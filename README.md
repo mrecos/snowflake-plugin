@@ -147,15 +147,18 @@ Execute SQL queries with optional row limit (default: 100).
 
 **Example output:**
 ```
-id | name
----------
-1  | Alice
-2  | Bob
+| ID | NAME |
+| --- | --- |
+| 1 | Alice |
+| 2 | Bob |
 
 ✓ 2 row(s) in 0.234s
 ```
 
-**Note:** Write operations (INSERT, UPDATE, DELETE, CREATE, DROP) are blocked for safety.
+**Note:**
+- Write operations (INSERT, UPDATE, DELETE, CREATE, DROP) are blocked for safety
+- Query results are formatted as markdown tables for better readability
+- In Claude Code, tool output may be collapsed by default - press `Ctrl+O` (or `Cmd+O` on Mac) to expand and view the full table
 
 ### Check Session Context
 
