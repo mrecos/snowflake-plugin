@@ -48,6 +48,11 @@ class SnowflakeConnection:
             self._connection.close()
             self._connection = None
 
+    def force_reconnect(self) -> snowflake.connector.SnowflakeConnection:
+        """Force close and reconnect (useful when auth expires)."""
+        self.close()
+        return self.connect()
+
     def is_healthy(self) -> bool:
         """Check if connection is active and healthy."""
         try:
