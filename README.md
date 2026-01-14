@@ -58,28 +58,39 @@ SNOWFLAKE_PAT=your_personal_access_token
 
 ## Usage
 
-### Available Commands
+The plugin provides executable scripts for interacting with Snowflake through the persistent daemon.
 
-The plugin provides two commands for interacting with Snowflake:
-
-#### Test Connection
+### Test Connection
 
 ```bash
-/snowflake-daemon:sf-connect
+./bin/sf-connect
 ```
 
 Tests the daemon connection and displays Snowflake connection info:
-- Snowflake version
-- Current user, role, database, schema, warehouse
-- Connection health status
 
-#### Execute Query
+**Example output:**
+```
+✓ Daemon is running
+  Status: healthy
+  Connection count: 1
+  Uptime: 5.2s
 
-```bash
-/snowflake-daemon:sf-query "SELECT * FROM my_table" 50
+✓ Connected to Snowflake
+  Version: 8.45.0
+  User: YOUR_USERNAME
+  Role: YOUR_ROLE
+  Database: YOUR_DATABASE
+  Schema: YOUR_SCHEMA
+  Warehouse: YOUR_WAREHOUSE
 ```
 
-Executes a SQL query with optional row limit (default: 100).
+### Execute Queries
+
+```bash
+./bin/sf-query "SELECT * FROM my_table" [limit]
+```
+
+Execute SQL queries with optional row limit (default: 100).
 
 **Supported query types:**
 - `SELECT` - Query data
@@ -91,27 +102,38 @@ Executes a SQL query with optional row limit (default: 100).
 
 ```bash
 # Simple query
-/snowflake-daemon:sf-query "SELECT 1 as test"
+./bin/sf-query "SELECT 1 as test"
 
 # Query with limit
-/snowflake-daemon:sf-query "SELECT * FROM customers" 10
+./bin/sf-query "SELECT * FROM customers" 10
 
 # Show tables
-/snowflake-daemon:sf-query "SHOW TABLES"
+./bin/sf-query "SHOW TABLES"
 
 # Current context
-/snowflake-daemon:sf-query "SELECT CURRENT_DATABASE(), CURRENT_SCHEMA()"
+./bin/sf-query "SELECT CURRENT_DATABASE(), CURRENT_SCHEMA()"
+```
+
+**Example output:**
+```
+id | name
+---------
+1  | Alice
+2  | Bob
+
+✓ 2 row(s) in 0.234s
 ```
 
 **Note:** Write operations (INSERT, UPDATE, DELETE, CREATE, DROP) are blocked for safety.
 
 ### Command Features
 
-- **Auto-start**: Daemon starts automatically on first command
+- **Auto-start**: Daemon starts automatically on first command use
 - **Persistent connection**: Connection and context preserved across queries
 - **Read-only**: Write operations blocked by default (Phase 4 will add write support)
 - **Auto-LIMIT**: SELECT queries automatically get LIMIT clause
 - **Error handling**: Clear error messages for common issues
+- **No manual setup**: Just run the scripts - they handle everything
 
 ## Development Status
 
