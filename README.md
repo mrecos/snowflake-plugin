@@ -31,9 +31,17 @@ Lightweight Python Daemon (FastAPI)
 
 ## Installation
 
-### 1. Clone the repository
+### 1. Install the plugin in Claude Code
+
+The plugin must be installed in your Claude Code plugins directory:
 
 ```bash
+# Navigate to your Claude Code plugins directory
+cd ~/.config/claude/plugins  # Linux/macOS
+# or
+cd %APPDATA%\claude\plugins  # Windows
+
+# Clone the repository
 git clone https://github.com/mrecos/snowflake-daemon-plugin.git
 cd snowflake-daemon-plugin
 ```
@@ -60,14 +68,33 @@ SNOWFLAKE_USER=your_username
 SNOWFLAKE_PAT=your_personal_access_token
 ```
 
+### 4. Restart Claude Code
+
+Restart Claude Code to load the plugin. You can verify it's installed by typing `/` in Claude Code and looking for `snowflake-daemon` commands.
+
 ## Usage
 
-The plugin provides executable scripts for interacting with Snowflake through the persistent daemon.
+The plugin provides slash commands in Claude Code for interacting with Snowflake through the persistent daemon.
+
+### Quick Start
+
+In Claude Code, simply type `/` to see available commands, or just tell Claude what you want to do:
+
+```
+"Show me the tables in my database"
+"Query the customers table"
+"What's my current database and schema?"
+"Stop the Snowflake daemon"
+```
+
+Claude Code will automatically select the appropriate slash command based on your intent.
+
+### Available Commands
 
 ### Test Connection
 
-```bash
-./bin/sf-connect
+```
+/snowflake-daemon:sf-connect
 ```
 
 Tests the daemon connection and displays Snowflake connection info:
@@ -90,8 +117,8 @@ Tests the daemon connection and displays Snowflake connection info:
 
 ### Execute Queries
 
-```bash
-./bin/sf-query "SELECT * FROM my_table" [limit]
+```
+/snowflake-daemon:sf-query "SELECT * FROM my_table"
 ```
 
 Execute SQL queries with optional row limit (default: 100).
@@ -104,18 +131,18 @@ Execute SQL queries with optional row limit (default: 100).
 
 **Example queries:**
 
-```bash
+```
 # Simple query
-./bin/sf-query "SELECT 1 as test"
-
-# Query with limit
-./bin/sf-query "SELECT * FROM customers" 10
+/snowflake-daemon:sf-query "SELECT 1 as test"
 
 # Show tables
-./bin/sf-query "SHOW TABLES"
+/snowflake-daemon:sf-query "SHOW TABLES"
 
 # Current context
-./bin/sf-query "SELECT CURRENT_DATABASE(), CURRENT_SCHEMA()"
+/snowflake-daemon:sf-query "SELECT CURRENT_DATABASE(), CURRENT_SCHEMA()"
+
+# Change database context
+/snowflake-daemon:sf-query "USE DATABASE my_db"
 ```
 
 **Example output:**
@@ -132,8 +159,8 @@ id | name
 
 ### Check Session Context
 
-```bash
-./bin/sf-context
+```
+/snowflake-daemon:sf-context
 ```
 
 Display current session state (database, schema, warehouse, role).
@@ -149,8 +176,8 @@ Current Snowflake Session Context:
 
 ### Stop Daemon
 
-```bash
-./bin/sf-stop
+```
+/snowflake-daemon:sf-stop
 ```
 
 Gracefully stop the daemon and close the Snowflake connection.
@@ -181,7 +208,8 @@ The daemon will automatically restart on the next query command.
 - **Read-only**: Write operations blocked by default (Phase 4 will add write support)
 - **Auto-LIMIT**: SELECT queries automatically get LIMIT clause
 - **Error handling**: Clear error messages for common issues
-- **No manual setup**: Just run the scripts - they handle everything
+- **No manual setup**: Just use the slash commands - they handle everything
+- **Claude Code integration**: Commands auto-selected based on user intent
 
 ## Development Status
 
