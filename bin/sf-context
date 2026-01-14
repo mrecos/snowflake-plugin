@@ -1,0 +1,28 @@
+#!/usr/bin/env python3
+"""Show current Snowflake session context."""
+import sys
+import os
+
+# Add project root to path
+project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, project_root)
+
+from daemon.client import DaemonClient
+
+client = DaemonClient()
+
+# Get current session state
+state = client.state()
+
+if state.get("error"):
+    print(f"❌ Failed to get session state")
+    print(f"   Error: {state.get('error')}")
+    sys.exit(1)
+
+# Display session state
+print("Current Snowflake Session Context:")
+print()
+print(f"  Database:  {state.get('database') if state.get('database') else '(not set)'}")
+print(f"  Schema:    {state.get('schema') if state.get('schema') else '(not set)'}")
+print(f"  Warehouse: {state.get('warehouse') if state.get('warehouse') else '(not set)'}")
+print(f"  Role:      {state.get('role') if state.get('role') else '(not set)'}")

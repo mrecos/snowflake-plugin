@@ -2,15 +2,17 @@ from fastapi import FastAPI
 from daemon.models import QueryRequest, QueryResponse, HealthResponse
 from daemon.connection import SnowflakeConnection
 from daemon.executor import QueryExecutor
+from daemon.state import StateManager, SessionState
 import time
 
 app = FastAPI(title="Snowflake Daemon")
 start_time = time.time()
 
-# Global connection and executor (will improve in Phase 2 with connection pool)
+# Global connection, state manager, and executor (will improve in Phase 3 with connection pool)
+state_manager = StateManager()
 try:
     connection = SnowflakeConnection()
-    executor = QueryExecutor(connection)
+    executor = QueryExecutor(connection, state_manager)
     connection_available = True
 except ValueError as e:
     # Missing credentials - daemon will start but queries will fail with helpful error
@@ -43,6 +45,12 @@ async def execute_query(request: QueryRequest) -> QueryResponse:
 
     response = await executor.execute(request.sql, request.limit)
     return response
+
+
+@app.get("/state")
+async def get_state() -> SessionState:
+    """Get current session state (database, schema, warehouse, role)."""
+    return state_manager.get_state()
 
 
 # Entry point for manual testing

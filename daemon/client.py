@@ -84,6 +84,21 @@ class DaemonClient:
         except Exception as e:
             return {"success": False, "error": str(e)}
 
+    def state(self) -> Dict[str, Any]:
+        """Get current session state (database, schema, warehouse, role)."""
+        if not self.start_daemon():
+            return {
+                "error": "Failed to start daemon"
+            }
+
+        try:
+            response = httpx.get(f"{self.base_url}/state", timeout=5.0)
+            return response.json()
+        except Exception as e:
+            return {
+                "error": str(e)
+            }
+
     def stop_daemon(self) -> bool:
         """Stop the daemon (graceful shutdown)."""
         # For now, this is a placeholder
