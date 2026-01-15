@@ -39,7 +39,7 @@ The plugin must be installed in your Claude Code plugins directory:
 
 ```bash
 # Navigate to your Claude Code plugins directory
-cd ~/.config/claude/plugins  # Linux/macOS
+cd ~/.claude/plugins  # Linux/macOS
 # or
 cd %APPDATA%\claude\plugins  # Windows
 
