@@ -17,9 +17,9 @@ Gracefully stop the Snowflake daemon and close the connection.
 
 ## Auto-Restart
 The daemon will automatically restart on the next query command:
-- `/snowflake-daemon:sf-query`
-- `/snowflake-daemon:sf-connect`
-- `/snowflake-daemon:sf-context`
+- `/snowflake:sf-query`
+- `/snowflake:sf-connect`
+- `/snowflake:sf-context`
 
 ## Use Cases
 - **Load new code**: Stop daemon to pick up code changes

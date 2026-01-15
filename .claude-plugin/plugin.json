@@ -1,7 +1,7 @@
 {
-  "name": "snowflake-daemon",
+  "name": "snowflake",
   "version": "1.0.0",
-  "description": "Snowflake plugin with persistent daemon connection for session management",
+  "description": "Snowflake plugin with persistent connection for session management",
   "author": {
     "name": "Matt Harris"
   },
@@ -9,7 +9,6 @@
     "snowflake",
     "sql",
     "database",
-    "daemon",
     "persistent-connection"
   ],
   "homepage": "https://github.com/mrecos/snowflake-daemon-plugin",

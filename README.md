@@ -1,8 +1,8 @@
-# Snowflake Claude-Code Plugin 
+# Snowflake Plugin for Claude Code
 
 ## (Not an official product of Snowflake or Anthropic)
 
-![Snowflake Daemon Plugin banner](img/banner1.png)
+![Snowflake Plugin banner](img/banner1.png)
 
 Session-persistent Snowflake plugin with background daemon for maintaining database connections.
 
@@ -72,7 +72,7 @@ SNOWFLAKE_PAT=your_personal_access_token
 
 ### 4. Restart Claude Code
 
-Restart Claude Code to load the plugin. You can verify it's installed by typing `/` in Claude Code and looking for `snowflake-daemon` commands.
+Restart Claude Code to load the plugin. You can verify it's installed by typing `/` in Claude Code and looking for `snowflake` commands.
 
 ## Usage
 
@@ -96,7 +96,7 @@ Claude Code will automatically select the appropriate slash command based on you
 ### Test Connection
 
 ```
-/snowflake-daemon:sf-connect
+/snowflake:sf-connect
 ```
 
 Tests the daemon connection and displays Snowflake connection info:
@@ -120,7 +120,7 @@ Tests the daemon connection and displays Snowflake connection info:
 ### Execute Queries
 
 ```
-/snowflake-daemon:sf-query "SELECT * FROM my_table"
+/snowflake:sf-query "SELECT * FROM my_table"
 ```
 
 Execute SQL queries with optional row limit (default: 100).
@@ -151,19 +151,19 @@ Execute SQL queries with optional row limit (default: 100).
 
 ```
 # Read operations
-/snowflake-daemon:sf-query "SELECT * FROM customers LIMIT 10"
-/snowflake-daemon:sf-query "SHOW TABLES"
-/snowflake-daemon:sf-query "USE DATABASE my_db"
+/snowflake:sf-query "SELECT * FROM customers LIMIT 10"
+/snowflake:sf-query "SHOW TABLES"
+/snowflake:sf-query "USE DATABASE my_db"
 
 # Write operations (DML)
-/snowflake-daemon:sf-query "INSERT INTO customers (name, email) VALUES ('Alice', 'alice@example.com')"
-/snowflake-daemon:sf-query "UPDATE customers SET status = 'active' WHERE id = 1"
-/snowflake-daemon:sf-query "DELETE FROM customers WHERE id = 999"
+/snowflake:sf-query "INSERT INTO customers (name, email) VALUES ('Alice', 'alice@example.com')"
+/snowflake:sf-query "UPDATE customers SET status = 'active' WHERE id = 1"
+/snowflake:sf-query "DELETE FROM customers WHERE id = 999"
 
 # DDL operations
-/snowflake-daemon:sf-query "CREATE TABLE test (id INT, name VARCHAR(100))"
-/snowflake-daemon:sf-query "ALTER TABLE test ADD COLUMN email VARCHAR(200)"
-/snowflake-daemon:sf-query "DROP TABLE test"
+/snowflake:sf-query "CREATE TABLE test (id INT, name VARCHAR(100))"
+/snowflake:sf-query "ALTER TABLE test ADD COLUMN email VARCHAR(200)"
+/snowflake:sf-query "DROP TABLE test"
 ```
 
 **Example output:**
@@ -185,7 +185,7 @@ Execute SQL queries with optional row limit (default: 100).
 ### Check Session Context
 
 ```
-/snowflake-daemon:sf-context
+/snowflake:sf-context
 ```
 
 Display current session state (database, schema, warehouse, role).
@@ -202,7 +202,7 @@ Current Snowflake Session Context:
 ### Stop Daemon
 
 ```
-/snowflake-daemon:sf-stop
+/snowflake:sf-stop
 ```
 
 Gracefully stop the daemon and close the Snowflake connection.
@@ -265,16 +265,16 @@ This project has completed **Phase 1 (Foundation)**, **Phase 2 (Session Manageme
 - [x] **Phase 1, Milestone 1.4: Plugin Commands**
   - [x] DaemonClient for HTTP communication with daemon
   - [x] Auto-start daemon on first command
-  - [x] `/snowflake-daemon:sf-connect` - Test connection
-  - [x] `/snowflake-daemon:sf-query` - Execute queries
+  - [x] `/snowflake:sf-connect` - Test connection
+  - [x] `/snowflake:sf-query` - Execute queries
   - [x] 17 comprehensive unit tests for client
   - [x] 95% overall code coverage
 
 - [x] **Phase 2, Milestone 2.1: Session State Management**
   - [x] StateManager class for tracking session context
   - [x] USE command support (DATABASE, SCHEMA, WAREHOUSE, ROLE)
-  - [x] `/snowflake-daemon:sf-context` - Display current context
-  - [x] `/snowflake-daemon:sf-stop` - Graceful daemon shutdown
+  - [x] `/snowflake:sf-context` - Display current context
+  - [x] `/snowflake:sf-stop` - Graceful daemon shutdown
   - [x] Auto-reconnect on authentication token expiry
   - [x] 18 comprehensive unit tests for state manager
   - [x] 86% overall code coverage
