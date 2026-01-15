@@ -3,6 +3,7 @@ from daemon.models import QueryRequest, QueryResponse, HealthResponse
 from daemon.connection import SnowflakeConnection
 from daemon.executor import QueryExecutor
 from daemon.state import StateManager, SessionState
+from daemon.validators import WriteValidator
 import time
 import os
 import signal
@@ -12,9 +13,10 @@ start_time = time.time()
 
 # Global connection, state manager, and executor (will improve in Phase 3 with connection pool)
 state_manager = StateManager()
+validator = WriteValidator()  # Allow all operations (read, DML, DDL)
 try:
     connection = SnowflakeConnection()
-    executor = QueryExecutor(connection, state_manager)
+    executor = QueryExecutor(connection, state_manager, validator)
     connection_available = True
 except ValueError as e:
     # Missing credentials - daemon will start but queries will fail with helpful error

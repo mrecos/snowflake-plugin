@@ -2,27 +2,27 @@ from typing import Optional, Tuple
 from daemon.connection import SnowflakeConnection
 from daemon.models import QueryResponse
 from daemon.state import StateManager
+from daemon.validators import BaseValidator, ReadOnlyValidator
 import time
 
 
 class QueryExecutor:
     """Executes queries against Snowflake connection."""
 
-    def __init__(self, connection: SnowflakeConnection, state_manager: Optional[StateManager] = None):
+    def __init__(
+        self,
+        connection: SnowflakeConnection,
+        state_manager: Optional[StateManager] = None,
+        validator: Optional[BaseValidator] = None
+    ):
         self.connection = connection
         self.state_manager = state_manager if state_manager is not None else StateManager()
+        # Default to read-only for safety, but allow override
+        self.validator = validator if validator is not None else ReadOnlyValidator()
 
     def _validate_query(self, sql: str) -> Tuple[bool, Optional[str]]:
-        """Validate query (start with read-only)."""
-        sql_upper = sql.strip().upper()
-
-        # Allow SELECT, SHOW, and USE commands
-        allowed_starts = ['SELECT', 'WITH', 'SHOW', 'DESCRIBE', 'DESC', 'USE']
-        if not any(sql_upper.startswith(cmd) for cmd in allowed_starts):
-            command = sql_upper.split()[0] if sql_upper else "UNKNOWN"
-            return False, f"Only read-only queries allowed: {command}"
-
-        return True, None
+        """Validate query using the configured validator."""
+        return self.validator.validate(sql)
 
     def _update_state_from_use_command(self, sql: str):
         """Update state when USE command is executed."""

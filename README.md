@@ -12,12 +12,13 @@ This Claude Code plugin provides a **stateful Snowflake connection** using a lig
 
 ## Key Features
 
-- **Persistent Connections**: Background daemon maintains connection pool
+- **Persistent Connections**: Background daemon maintains persistent connection
 - **Session State**: Database, schema, warehouse, and role persist across queries
+- **Full SQL Support**: All operations (read, DML, DDL, transactions)
 - **Auto-Start**: Daemon automatically starts on first command
-- **Auto-Shutdown**: Gracefully shuts down after idle timeout (default 30 minutes)
-- **Connection Pooling**: Manages multiple connections with health monitoring
-- **Transaction Support**: DML operations with automatic commit/rollback
+- **Graceful Shutdown**: Stop daemon and auto-restart on next query
+- **Auto-Reconnect**: Handles authentication token expiry transparently
+- **Flexible Security**: Configurable validators (read-only, DML, DDL, or full access)
 
 ## Architecture
 
@@ -124,25 +125,44 @@ Tests the daemon connection and displays Snowflake connection info:
 Execute SQL queries with optional row limit (default: 100).
 
 **Supported query types:**
+
+**Read Operations:**
 - `SELECT` - Query data
 - `SHOW` - Show database objects
 - `DESCRIBE` / `DESC` - Describe table structure
 - `WITH` - Common table expressions
+- `USE` - Change context (database, schema, warehouse, role)
+
+**Write Operations (DML):**
+- `INSERT` - Insert data
+- `UPDATE` - Update data
+- `DELETE` - Delete data
+- `MERGE` - Merge data
+- `COPY` - Load data from stages
+
+**DDL Operations:**
+- `CREATE` - Create tables, views, etc.
+- `DROP` - Drop tables, views, etc.
+- `ALTER` - Modify table structure
+- `TRUNCATE` - Clear table data
 
 **Example queries:**
 
 ```
-# Simple query
-/snowflake-daemon:sf-query "SELECT 1 as test"
-
-# Show tables
+# Read operations
+/snowflake-daemon:sf-query "SELECT * FROM customers LIMIT 10"
 /snowflake-daemon:sf-query "SHOW TABLES"
-
-# Current context
-/snowflake-daemon:sf-query "SELECT CURRENT_DATABASE(), CURRENT_SCHEMA()"
-
-# Change database context
 /snowflake-daemon:sf-query "USE DATABASE my_db"
+
+# Write operations (DML)
+/snowflake-daemon:sf-query "INSERT INTO customers (name, email) VALUES ('Alice', 'alice@example.com')"
+/snowflake-daemon:sf-query "UPDATE customers SET status = 'active' WHERE id = 1"
+/snowflake-daemon:sf-query "DELETE FROM customers WHERE id = 999"
+
+# DDL operations
+/snowflake-daemon:sf-query "CREATE TABLE test (id INT, name VARCHAR(100))"
+/snowflake-daemon:sf-query "ALTER TABLE test ADD COLUMN email VARCHAR(200)"
+/snowflake-daemon:sf-query "DROP TABLE test"
 ```
 
 **Example output:**
@@ -156,9 +176,10 @@ Execute SQL queries with optional row limit (default: 100).
 ```
 
 **Note:**
-- Write operations (INSERT, UPDATE, DELETE, CREATE, DROP) are blocked for safety
+- All SQL operations are supported (read, DML, and DDL)
 - Query results are formatted as markdown tables for better readability
 - In Claude Code, tool output may be collapsed by default - press `Ctrl+O` (or `Cmd+O` on Mac) to expand and view the full table
+- **Use caution with write operations** - changes are immediately committed to Snowflake
 
 ### Check Session Context
 
@@ -208,15 +229,16 @@ The daemon will automatically restart on the next query command.
 
 - **Auto-start**: Daemon starts automatically on first command use
 - **Persistent connection**: Connection and context preserved across queries
-- **Read-only**: Write operations blocked by default (Phase 4 will add write support)
+- **Full SQL support**: All operations supported (read, DML, DDL)
 - **Auto-LIMIT**: SELECT queries automatically get LIMIT clause
 - **Error handling**: Clear error messages for common issues
 - **No manual setup**: Just use the slash commands - they handle everything
 - **Claude Code integration**: Commands auto-selected based on user intent
+- **Flexible security**: Configurable validators (ReadOnly, DML, DDL, or Write-all)
 
 ## Development Status
 
-This project is currently in **Phase 1: Foundation**.
+This project has completed **Phase 1 (Foundation)**, **Phase 2 (Session Management)**, and **Phase 4, Milestone 4.1 (Write Operations)**.
 
 ### Completed Milestones
 
@@ -256,18 +278,28 @@ This project is currently in **Phase 1: Foundation**.
   - [x] 18 comprehensive unit tests for state manager
   - [x] 86% overall code coverage
 
+- [x] **Phase 4, Milestone 4.1: Validator Integration & Write Operations**
+  - [x] Pluggable validator architecture (BaseValidator, ReadOnlyValidator, DMLValidator, DDLValidator, WriteValidator)
+  - [x] Support for all SQL operations (read, DML, DDL, transactions)
+  - [x] INSERT, UPDATE, DELETE, MERGE, COPY operations
+  - [x] CREATE, DROP, ALTER, TRUNCATE operations
+  - [x] Transaction control (BEGIN, COMMIT, ROLLBACK)
+  - [x] 55 comprehensive validator tests
+  - [x] End-to-end testing with real Snowflake
+  - [x] Configurable security levels
+
 ### Test Results
 
 ```
-✅ 74 total tests passing
-✅ 86% code coverage
-✅ Production-ready with read-only queries and session management
+✅ 129 total tests passing (74 original + 55 validator tests)
+✅ All write operations tested and working
+✅ Production-ready with full SQL support
 ```
 
 ### Next Steps
 
 - [ ] Phase 3: Connection Pool & Reliability
-- [ ] Phase 4: Write Operations & Transactions
+- [ ] Phase 4, Milestone 4.2: Transaction Support (explicit transactions)
 - [ ] Phase 5: Polish & Production Readiness
 
 See [HANDOFF.md](HANDOFF.md) for the complete implementation plan.
